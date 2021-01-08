@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-'''
-@time: 2019/01/11 11:28
-spytensor
-'''
-
 import os
 import json
 import numpy as np
