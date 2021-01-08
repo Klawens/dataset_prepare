@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+'''
+@time: 2019/01/11 11:28
+spytensor
+'''
+
 import os
 import json
 import numpy as np
@@ -12,21 +17,21 @@ from sklearn.model_selection import train_test_split
 np.random.seed(41)
 
 #0为背景
-classname_to_id = {"Aortic enlargement": 0,
-                   "Atelectasis": 1,
-                   "Calcification": 2,
-                   "Cardiomegaly": 3,
-                   "Consolidation": 4,
-                   "ILD": 5,
-                   "Infiltration": 6,
-                   "Lung Opacity": 7,
-                   "Nodule/Mass": 8,
-                   "Other lesion": 9,
-                   "Pleural effusion": 10,
-                   "Pleural thickening": 11,
-                   "Pneumothorax": 12,
-                   "Pulmonary fibrosis": 13,
-}
+classname_to_id = {"0": 0,
+                   "1": 1,
+                   "2": 2,
+                   "3": 3,
+                   "4": 4,
+                   "5": 5,
+                   "6": 6,
+                   "7": 7,
+                   "8": 8,
+                   "9": 9,
+                   "10": 10,
+                   "11": 11,
+                   "12": 12,
+                   "13": 13
+                }
 
 class Csv2CoCo:
 
@@ -36,6 +41,7 @@ class Csv2CoCo:
         self.categories = []
         self.img_id = 0
         self.ann_id = 0
+        self.nnn = ''
         self.image_dir = image_dir
         self.total_annos = total_annos
 
@@ -46,6 +52,7 @@ class Csv2CoCo:
     def to_coco(self, keys):
         self._init_categories()
         for key in keys:
+            #print(key)
             self.images.append(self._image(key))
             shapes = self.total_annos[key]
             for shape in shapes:
@@ -57,6 +64,7 @@ class Csv2CoCo:
                 self.annotations.append(annotation)
                 self.ann_id += 1
             self.img_id += 1
+            self.nnn = key
         instance = {}
         instance['info'] = 'klawens created'
         instance['license'] = ['license']
@@ -80,7 +88,7 @@ class Csv2CoCo:
         img = cv2.imread(self.image_dir + path + '.jpg')
         image['height'] = img.shape[0]
         image['width'] = img.shape[1]
-        image['id'] = self.img_id
+        image['id'] = self.nnn
         image['file_name'] = path + '.jpg'
         return image
 
@@ -90,8 +98,8 @@ class Csv2CoCo:
         points = shape[:4]
         annotation = {}
         annotation['id'] = self.ann_id
-        annotation['image_id'] = self.img_id
-        annotation['category_id'] = int(classname_to_id[label])
+        annotation['image_id'] = self.nnn
+        annotation['category_id'] = int(classname_to_id[str(label)])
         annotation['segmentation'] = self._get_seg(points)
         annotation['bbox'] = self._get_box(points)
         annotation['iscrowd'] = 0
@@ -119,9 +127,9 @@ class Csv2CoCo:
    
 
 if __name__ == '__main__':
-    csv_file = "/4TB-HDD1/lsc/data/kaggle/xray_det/train.csv"
-    image_dir = "/4TB-HDD1/lsc/data/kaggle/xray_det/train/"
-    saved_coco_path = "/4TB-HDD1/lsc/data/kaggle/xray_det/"
+    csv_file = "test.csv"
+    image_dir = "test/"
+    saved_coco_path = ""
     # 整合csv格式标注文件
     total_csv_annotations = {}
     annotations = pd.read_csv(csv_file,header=None).values
@@ -134,24 +142,26 @@ if __name__ == '__main__':
             total_csv_annotations[key] = value
     # 按照键值划分数据
     total_keys = list(total_csv_annotations.keys())
-    train_keys, val_keys = train_test_split(total_keys, test_size=0.2)
-    print("train_n:", len(train_keys), 'val_n:', len(val_keys))
+    train_keys = total_keys
+    #import time
+    print("image_n:", len(train_keys))
+    #time.sleep(30)
     # 创建必须的文件夹
     if not os.path.exists('%scoco/annotations/'%saved_coco_path):
         os.makedirs('%scoco/annotations/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/train2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/train2017/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/val2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/val2017/'%saved_coco_path)
+    if not os.path.exists('%scoco/images/test2017/'%saved_coco_path):
+        os.makedirs('%scoco/images/test2017/'%saved_coco_path)
+    #if not os.path.exists('%scoco/images/val2017/'%saved_coco_path):
+    #    os.makedirs('%scoco/images/val2017/'%saved_coco_path)
     # 把训练集转化为COCO的json格式
     l2c_train = Csv2CoCo(image_dir=image_dir,total_annos=total_csv_annotations)
     train_instance = l2c_train.to_coco(train_keys)
-    l2c_train.save_coco_json(train_instance, '%scoco/annotations/instances_train2017.json'%saved_coco_path)
+    l2c_train.save_coco_json(train_instance, '%scoco/annotations/instances_test2017.json'%saved_coco_path)
     for file in train_keys:
-        shutil.copy(image_dir+file+'.jpg',"%scoco/images/train2017/"%saved_coco_path)
-    for file in val_keys:
-        shutil.copy(image_dir+file+'.jpg',"%scoco/images/val2017/"%saved_coco_path)
+        shutil.copy(image_dir+file+'.jpg',"%scoco/images/test2017/"%saved_coco_path)
+    #for file in val_keys:
+    #    shutil.copy(image_dir+file+'.jpg',"%scoco/images/val2017/"%saved_coco_path)
     # 把验证集转化为COCO的json格式
-    l2c_val = Csv2CoCo(image_dir=image_dir,total_annos=total_csv_annotations)
-    val_instance = l2c_val.to_coco(val_keys)
-    l2c_val.save_coco_json(val_instance, '%scoco/annotations/instances_val2017.json'%saved_coco_path)
+    #l2c_val = Csv2CoCo(image_dir=image_dir,total_annos=total_csv_annotations)
+    #val_instance = l2c_val.to_coco(val_keys)
+    #l2c_val.save_coco_json(val_instance, '%scoco/annotations/instances_val2017.json'%saved_coco_path)
