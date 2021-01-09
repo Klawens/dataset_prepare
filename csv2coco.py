@@ -83,7 +83,7 @@ class Csv2CoCo:
         img = cv2.imread(self.image_dir + path + '.jpg')
         image['height'] = img.shape[0]
         image['width'] = img.shape[1]
-        image['id'] = self.nnn
+        image['id'] = path
         image['file_name'] = path + '.jpg'
         return image
 
