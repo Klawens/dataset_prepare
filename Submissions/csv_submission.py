@@ -6,26 +6,29 @@ import time
 import numpy as np
 
 
-# with open('./xxx.bbox.json', 'r') as f:
-#     dic = json.load(f)
-# res = []
-# for i, ann in enumerate(dic):
-#     dic_out={}
-#     dic_out['name']=ann['image_id']+'.jpg'
-#     dic_out['category']=ann['category_id']
-#     x1=round(ann['bbox'][0],2)
-#     y1=round(ann['bbox'][1],2)
-#     x2=round(ann['bbox'][2]+ann['bbox'][0],2)
-#     y2=round(ann['bbox'][3]+ann['bbox'][1],2)
-#     dic_out['bbox']=[x1,y1,x2,y2]
-#     dic_out['score']=ann['score']
-#     res.append(dic_out)
-# fp=open('result.json', 'w')
-# json.dump(res, fp, indent=4, ensure_ascii=False)
+# MMDetection inference result json
+with open('./xxx.bbox.json', 'r') as f:
+    dic = json.load(f)
+res = []
+for i, ann in enumerate(dic):
+    dic_out={}
+    dic_out['name']=ann['image_id']+'.jpg'
+    dic_out['category']=ann['category_id']
+    x1=round(ann['bbox'][0],2)
+    y1=round(ann['bbox'][1],2)
+    x2=round(ann['bbox'][2]+ann['bbox'][0],2)
+    y2=round(ann['bbox'][3]+ann['bbox'][1],2)
+    dic_out['bbox']=[x1,y1,x2,y2]
+    dic_out['score']=ann['score']
+    res.append(dic_out)
+fp=open('result.json', 'w')
+json.dump(res, fp, indent=4, ensure_ascii=False)
+fp.close()
+f.close()
 
 # Generate unique names
 print('Generating unique names.....')
-with open('result0.05.json', 'r') as f:
+with open('result.json', 'r') as f:
     j = json.load(f)
 c = open('unique_name.csv', 'w')
 csv_f = csv.writer(c)
@@ -37,12 +40,12 @@ for i in j:
 c.close()
 f.close()
 print('Unique names Generated...')
-time.sleep(1)
+time.sleep(0.5)
 
 # Append Strings
 r = csv.reader(open('unique_name.csv', 'r'))
 sub_f = csv.writer(open('submit.csv', 'w'))
-ff = open('result0.05.json', 'r')
+ff = open('result.json', 'r')
 json_f = json.load(ff)
 s = ''
 k=0
