@@ -17,20 +17,11 @@ from sklearn.model_selection import train_test_split
 np.random.seed(41)
 
 #0为背景
-classname_to_id = {"0": 0,
-                   "1": 1,
-                   "2": 2,
-                   "3": 3,
-                   "4": 4,
-                   "5": 5,
-                   "6": 6,
-                   "7": 7,
-                   "8": 8,
-                   "9": 9,
-                   "10": 10,
-                   "11": 11,
-                   "12": 12,
-                   "13": 13}
+classname_to_id = {'Aortic enlargement':1, 'Atelectasis':2, 'Calcification':3, 'Cardiomegaly':4,
+    		   	   'Consolidation':5, 'ILD':6, 'Infiltration':7, 'Lung Opacity':8, 'Nodule/Mass':9,
+               	   'Other lesion':10, 'Pleural effusion':11, 'Pleural thickening':12, 'Pneumothorax':13,
+               	   'Pulmonary fibrosis':14
+                   }
 
 class Csv2CoCo:
 
@@ -84,7 +75,7 @@ class Csv2CoCo:
         img = cv2.imread(self.image_dir + path + '.jpg')
         image['height'] = img.shape[0]
         image['width'] = img.shape[1]
-        image['id'] = path[:-4]
+        image['id'] = path
         image['file_name'] = path + '.jpg'
         return image
 
@@ -94,7 +85,7 @@ class Csv2CoCo:
         points = shape[:4]
         annotation = {}
         annotation['id'] = self.ann_id
-        annotation['image_id'] = path[:-4]
+        annotation['image_id'] = path
         annotation['category_id'] = int(classname_to_id[str(label)])
         annotation['segmentation'] = self._get_seg(points)
         annotation['bbox'] = self._get_box(points)
@@ -132,7 +123,6 @@ class Csv2CoCo:
 if __name__ == '__main__':
     csv_file = "test.csv"
     image_dir = "test/"
-    #image_dir = "../data/1/"
     saved_coco_path = "./"
     # 整合csv格式标注文件
     total_csv_annotations = {}
@@ -150,14 +140,13 @@ if __name__ == '__main__':
     # 创建必须的文件夹
     if not os.path.exists('%scoco/annotations/'%saved_coco_path):
         os.makedirs('%scoco/annotations/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/test2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/test2017/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/test2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/test2017/'%saved_coco_path)
+    if not os.path.exists('%scoco/images/train2017/'%saved_coco_path):
+        os.makedirs('%scoco/images/train2017/'%saved_coco_path)
+    if not os.path.exists('%scoco/images/train2017/'%saved_coco_path):
+        os.makedirs('%scoco/images/train2017/'%saved_coco_path)
     # 把训练集转化为COCO的json格式
     l2c_train = Csv2CoCo(image_dir=image_dir,total_annos=total_csv_annotations)
     train_instance = l2c_train.to_coco(total_keys)
     l2c_train.save_coco_json(train_instance, '%scoco/annotations/instances_test2017.json'%saved_coco_path)
-    
-    # 把验证集转化为COCO的json格式
+
     
