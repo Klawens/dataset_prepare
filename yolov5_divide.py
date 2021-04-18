@@ -11,8 +11,14 @@ for f in files:
     if f.split('.')[1] != 'txt':
         image_list.append(f)
 print('image：{}'.format(len(image_list)))
-for r in range(600):
-    random_list.append(random.randint(0, 4321))
+for r in range(60000):
+    if len(random_list) == 600:
+        break
+    k = random.randint(0, 4321)
+    if k not in random_list:
+        random_list.append(k)
+    else:
+        r -= 1
 for i in range(4322):
     if i in random_list:
         val.append(image_list[i].split('.')[0])
