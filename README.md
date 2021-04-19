@@ -1,2 +1,3 @@
 # dataset_prepare
-My scripts to format a typical dataset.
+Scripts for dataset_prepare and results Fusion, and submit format.
+Yo can find anything here.
