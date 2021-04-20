@@ -13,14 +13,11 @@ n = 0
 for img in os.listdir('data/test/'):
     w, h = cv2.imread('data/test/'+img).shape[1], cv2.imread('data/test/'+img).shape[0]
     # print(img.split('.')[0])
-    model0_box = []
-    model1_box = []
-    model0_score = []
-    model1_score = []
-    model0_label = []
-    model1_label = []
-    model0_id = []
-    model1_id = []
+    model0_box, model1_box = [], []
+    model0_score, model1_score = [], []
+    model0_label, model1_label = [], []
+    model0_id, model1_id = [], []
+    
     for img0 in model0:
         # print(img0)
         if img0['image_id'] == int(img.split('.')[0]):
