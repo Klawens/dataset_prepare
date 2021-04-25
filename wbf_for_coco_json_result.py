@@ -5,6 +5,7 @@ import json, os, numpy, cv2
 model0 = json.load(open('1.bbox.json', 'r'))
 model1 = json.load(open('2.bbox.json', 'r'))
 
+# Bigger weights for better model.
 weights = [2, 1]
 iou_thr = 0.5
 skip_box_thr = 0.0001
@@ -40,6 +41,7 @@ for img in os.listdir('data/test/'):
         boxes_list, scores_list, labels_list, weights=weights, iou_thr=iou_thr, skip_box_thr=skip_box_thr)
     # boxes_list = numpy.array(boxes_list)
     # print(boxes.shape)
+    # You can append here.
     
 
     ######### Your output format here #########
