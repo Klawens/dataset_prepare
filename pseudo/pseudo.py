@@ -1,40 +1,30 @@
 import json
 import csv
+import os
 
-file = open('xxx.bbox-0.264.json', 'r')
-result = csv.writer(open('pseudo.csv', 'w'))
+file = open('../detectors_33.64.json', 'r')
+result = csv.writer(open('pseudo.csv', 'w', newline=''))
 f = json.load(file)
-pred = open('pred.csv', 'r')
-pred = csv.reader(pred)
 
-abnormal = []
-
-for item in pred:
-    if float(item[1]) > 0.08:
-        abnormal.append(item[0])
+images = os.listdir('../test_images/')
 
 category_match = {
-    1: "Aortic enlargement",
-    2: "Atelectasis",
-    3: "Calcification",
-    4: "Cardiomegaly",
-    5: "Consolidation",
-    6: "ILD",
-    7: "Infiltration",
-    8: "Lung Opacity",
-    9: "Nodule/Mass",
-    10: "Other lesion",
-    11: "Pleural effusion",
-    12: "Pleural thickening",
-    13: "Pneumothorax",
-    14: "Pulmonary fibrosis",
+    1: "pedestrian",
+    2: "people",
+    3: "bicycle",
+    4: "car",
+    5: "van",
+    6: "truck",
+    7: "tricycle",
+    8: "awning-tricycle",
+    9: "bus",
+    10: "motor"
 }
 
 for i in f:
-    if i['image_id'] in abnormal:
-        # thres 0.5
-        # if i['score'] > 0.5:
-        #     result.writerow([i['image_id'], i['bbox'][0], i['bbox'][1], i['bbox'][0]+i['bbox'][2], i['bbox'][1]+i['bbox'][3], category_match[i['category_id']]])
-        # scheduled thres
-        if (i['score'] > 0.5) or ((i['category_id'] != 1 or 4) and i['score'] > 0.4):
-            result.writerow([i['image_id'], i['bbox'][0], i['bbox'][1], i['bbox'][0]+i['bbox'][2], i['bbox'][1]+i['bbox'][3], category_match[i['category_id']]])
+    if i['image_id'] + '.jpg' in images:
+        # thres
+        if i['score'] >= 0.495:
+            result.writerow(
+                [i['image_id'], i['bbox'][0], i['bbox'][1], i['bbox'][0] + i['bbox'][2], i['bbox'][1] + i['bbox'][3],
+                 category_match[i['category_id']]])
