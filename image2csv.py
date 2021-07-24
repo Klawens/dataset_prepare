@@ -1,7 +1,7 @@
 import os, csv
 
 
-f = open('test.csv', 'w')
+f = open('test.csv', 'w', newline='')
 images = os.listdir('/4TB-HDD1/lsc/data/kaggle/xray_det/test_jpg/')
 csv_writer = csv.writer(f)
 
