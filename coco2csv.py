@@ -1,25 +1,19 @@
-import json, csv
+import json
+import csv
 
-
-dic = {
-    0:'BladderAnastomosis', 1:'PullingTissue', 2:'PullingSeminalVesicle',
-    3:'CuttingSeminalVesicle', 4:'CuttingProstate', 5:'CuttingTissue',
-    6:'BladderNeckDissection', 7:'PullingProstate', 8:'SuckingBlood',
-    9:'SuckingSmoke', 10:'PullingBladderNeck', 11:'PullingVasDeferens',
-    12:'UrethraDissection', 13:'ClippingSeminalVesicle', 14:'CuttingMesocolon',
-    15:'ClippingBladderNeck', 16:'ClippingVasDeferens', 17:'ClippingTissue',
-    18:'CuttingVasDeferens', 19:'CuttingThread', 20:'BaggingProstate',
-    21:'MovingDownBladder', 22:'GraspingCatheter', 23:'PassingNeedle'
+classname_to_id = {
+    0: "phone", 1: "pad", 2: "laptop", 3: "wallet", 4: "packsack"
 }
 
-p_res = csv.writer(open('p_val.csv', 'w', newline=''))
-r_res = csv.writer(open('r_val.csv', 'w', newline=''))
+anno = json.load(open('../car_data2/train/annotations.json', 'r'))
+csv_res = csv.writer(open('train.csv', 'w', newline=''))
 
-j1 = json.load(open('phantom_val.json', 'r'))
-j2 = json.load(open('real_val.json', 'r'))
+for i in anno['annotations']:
+    fn = ''
+    for j in anno['images']:
+        if j['id'] == i['image_id']:
+            fn = j['file_name']
 
-for i in j1['annotations']:
-    p_res.writerow([i['image_id'], i['bbox'][0], i['bbox'][1], i['bbox'][0]+i['bbox'][2], i['bbox'][1]+i['bbox'][3], dic[i['category_id']]])
-
-for i in j2['annotations']:
-    r_res.writerow([i['image_id'], i['bbox'][0], i['bbox'][1], i['bbox'][0]+i['bbox'][2], i['bbox'][1]+i['bbox'][3], dic[i['category_id']]])
+    csv_res.writerow(
+        [fn.split('.')[0], i['bbox'][0], i['bbox'][1], i['bbox'][0] + i['bbox'][2], i['bbox'][1] + i['bbox'][3],
+         classname_to_id[i['category_id']]])
