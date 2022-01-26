@@ -1,18 +1,23 @@
-import csv, os
+import csv
+import os
+import cv2
+from tqdm import tqdm
 
-w, h = 640, 400
+ann_path = '../train/A/'
+res_csv = csv.writer(open('train.csv', 'w', newline=''))
 
-seq = 0
+for ann in tqdm(os.listdir(ann_path)):
+    if '.txt' in ann:
+        ann_txt = open(ann_path + ann).readlines()
+        w = cv2.imread(ann_path + ann.split('.')[0] + '.jpg').shape[1]
+        h = cv2.imread(ann_path + ann.split('.')[0] + '.jpg').shape[0]
 
-res = csv.writer(open('seq{}.csv'.format(seq), 'w', newline=''))
+        for line in ann_txt:
+            l = line.rstrip('\n').split(' ')
+            # print(l)
+            x1 = (float(l[1]) * w) - (float(l[3]) * w / 2)
+            y1 = (float(l[2]) * h) - (float(l[4]) * h / 2)
+            x2 = x1 + (float(l[3]) * w)
+            y2 = y1 + (float(l[4]) * h)
+            res_csv.writerow([ann.split('.')[0], x1, y1, x2, y2, 'ship'])
 
-anno_list = os.listdir('seq{}'.format(seq))
-for anno in anno_list:
-    for line in open('seq{}/'.format(seq) + anno, 'r'):
-        line = line.split(' ')
-        x1 = (float(line[1])*w) - (float(line[3])*w/2)
-        y1 = (float(line[2])*h) - (float(line[4])*h/2)
-        x2 = x1 + (float(line[3])*w)
-        y2 = y1 + (float(line[4])*h)
-        print([str(anno.split('.')[0]), x1, y1, x2, y2, 'person'])
-        res.writerow([str(anno.split('.')[0]) + '_', x1, y1, x2, y2, 'person'])
