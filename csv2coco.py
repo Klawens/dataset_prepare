@@ -137,16 +137,12 @@ if __name__ == '__main__':
     # 按照键值划分数据
     total_keys = list(total_csv_annotations.keys())
    
-    # 创建必须的文件夹
-    if not os.path.exists('%scoco/annotations/'%saved_coco_path):
-        os.makedirs('%scoco/annotations/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/train2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/train2017/'%saved_coco_path)
-    if not os.path.exists('%scoco/images/train2017/'%saved_coco_path):
-        os.makedirs('%scoco/images/train2017/'%saved_coco_path)
     # 把训练集转化为COCO的json格式
     l2c_train = Csv2CoCo(image_dir=image_dir,total_annos=total_csv_annotations)
     train_instance = l2c_train.to_coco(total_keys)
-    l2c_train.save_coco_json(train_instance, '%scoco/annotations/instances_test2017.json'%saved_coco_path)
+    l2c_train.save_coco_json(train_instance, 'train.json')
+
+# 图片名，x1,y1,x2,y2,class_name
+# 图片名，class_name，x1,y1,w,h
 
     
